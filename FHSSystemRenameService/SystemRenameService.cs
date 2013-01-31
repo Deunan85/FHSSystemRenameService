@@ -14,6 +14,7 @@ namespace FHSSystemRenameService
         [OperationBehavior(Impersonation = ImpersonationOption.Required)]
         public bool RenameComputer(string Name)
         {
+
             bool renamed;
             WindowsIdentity identity = ServiceSecurityContext.Current.WindowsIdentity;
             using (identity.Impersonate())
