@@ -139,7 +139,7 @@ namespace FHSSystemRenameService
         #endregion
 
         #region Execution Functions
-        private static bool SetComputerName(String Name)
+        public static bool SetComputerName(String Name)
         {
             using (ManagementObject wmiObject = new ManagementObject(new ManagementPath(String.Format("Win32_ComputerSystem.Name='{0}'", System.Environment.MachineName))))
             {
