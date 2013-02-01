@@ -5,15 +5,12 @@ using System.Text;
 using System.Runtime.InteropServices;
 using Microsoft.Win32;
 using System.Management;
-using System.IO;
-using System.Net;
+
 
 namespace FHSSystemRenameService
 {
     class WindowsAPI
     {
-        
-
         #region External API Calls
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         private static extern int SystemParametersInfo(int uiAction, int uiParam, String pvParam, int fWinIni);
@@ -159,26 +156,6 @@ namespace FHSSystemRenameService
                     return false;
                 }
             }
-        }
-        private static void GetWebBarCodeImage(String url, String ImagePath)
-        {
-            Stream _imageStream = new WebClient().OpenRead(url);
-            System.Drawing.Image _img = System.Drawing.Image.FromStream(_imageStream);
-            _img.Save(ImagePath);
-        }
-        private static string GetLocalIP()
-        {
-            IPHostEntry host;
-            string localIP = "";
-            host = Dns.GetHostEntry(Dns.GetHostName());
-            foreach (IPAddress ip in host.AddressList)
-            {
-                if (ip.AddressFamily.ToString() == "InterNetwork")
-                {
-                    localIP = ip.ToString();
-                }
-            }
-            return localIP;
         }
         #endregion // Execution Functions
     }

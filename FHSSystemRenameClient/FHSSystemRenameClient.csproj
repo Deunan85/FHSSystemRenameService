@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>65693d60-8e24-4d9b-83e0-176a9541d5fc</ProjectGuid>
+    <ProjectGuid>{0BF2D14F-CAAD-4D75-B267-363DF7A2C6B4}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>FHSSystemRenameClient</RootNamespace>
