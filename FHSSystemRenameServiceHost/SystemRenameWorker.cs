@@ -15,5 +15,9 @@ namespace FHSSystemRenameServiceHost
         {
 
         }
+        public void Run()
+        {
+
+        }
     }
 }

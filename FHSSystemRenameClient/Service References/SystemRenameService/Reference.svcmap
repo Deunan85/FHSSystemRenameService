@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="b981cf0f-6fe2-4802-8335-205096b8760c" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings />
+    <GenerateSerializableTypes>true</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <UseSerializerForFaults>true</UseSerializerForFaults>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://192.168.1.112:8080/SystemRenameService" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="SystemRenameService.xsd" MetadataType="Schema" ID="8db8a071-9d2c-4a70-8cbc-df9984bb7444" SourceId="1" SourceUrl="http://192.168.1.112:8080/SystemRenameService?xsd=xsd0" />
+    <MetadataFile FileName="SystemRenameService.wsdl" MetadataType="Wsdl" ID="0a057a2e-df47-4d58-a87e-985616385ca7" SourceId="1" SourceUrl="http://192.168.1.112:8080/SystemRenameService" />
+    <MetadataFile FileName="SystemRenameService1.xsd" MetadataType="Schema" ID="e2bfef25-0085-460b-9617-2826c12b6187" SourceId="1" SourceUrl="http://192.168.1.112:8080/SystemRenameService?xsd=xsd1" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>

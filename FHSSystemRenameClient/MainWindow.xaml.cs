@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Win32;
 using System.ComponentModel;
+using System.ServiceModel;
 
 namespace FHSSystemRenameClient
 {
@@ -22,15 +23,48 @@ namespace FHSSystemRenameClient
     /// </summary>
     public partial class MainWindow : Window
     {
+        private DataModel dm;
         public MainWindow()
         {
+            this.DataContext = new DataModel();
+            dm = (DataModel)DataContext;
             InitializeComponent();
         }
 
-        private void button1_Click(object sender, RoutedEventArgs e)
+        private void btOpenFile_Click(object sender, RoutedEventArgs e)
         {
+            // Configure open file dialog box
             OpenFileDialog dlg = new OpenFileDialog();
-            
+            dlg.FileName = "Computer List";
+            dlg.DefaultExt = ".csv";
+            dlg.Filter = "Comma Separated Values (.csv)|*.csv";
+
+            // Show open file dialog box
+            Nullable<bool> result = dlg.ShowDialog();
+
+            // Process open file dialog box
+            if (result == true)
+            {
+                tbFileName.Text = dlg.SafeFileName;
+                dm.ComputerList = ObservableCollectionBuilder.Parse(dlg.FileName);
+            }
+        }
+
+        private void btRenameComputer_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (DataHolder item in dm.ComputerList)
+            {
+                // Create the endpoint to connect to
+                string endPointAddr = "http://" + item.IPAddress + ":8080/SystemRenameService";
+                EndpointAddress endPointAddress = new EndpointAddress(endPointAddr);
+                WSHttpBinding binding = new WSHttpBinding();
+                using (SystemRenameService.SystemRenameServiceClient client = new SystemRenameService.SystemRenameServiceClient(binding, endPointAddress))
+                {
+                    // Send rename command
+                    item.Renamed = client.RenameComputer(item.ComputerName);
+                }
+                // Close connection
+            }
         }
     }
     public class DataModel : INotifyPropertyChanged

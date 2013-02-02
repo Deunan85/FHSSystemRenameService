@@ -19,7 +19,9 @@ namespace FHSSystemRenameService
             WindowsIdentity identity = ServiceSecurityContext.Current.WindowsIdentity;
             using (identity.Impersonate())
             {
-                renamed = WindowsAPI.SetComputerName(Name);
+                //renamed = WindowsAPI.SetComputerName(Name);
+                Console.WriteLine("RenameCalled");
+                renamed = true;
             }
             return renamed;
         }
