@@ -14,16 +14,32 @@ namespace FHSSystemRenameService
         [OperationBehavior(Impersonation = ImpersonationOption.Required)]
         public bool RenameComputer(string Name)
         {
-
-            bool renamed;
-            WindowsIdentity identity = ServiceSecurityContext.Current.WindowsIdentity;
-            using (identity.Impersonate())
+            try
             {
-                //renamed = WindowsAPI.SetComputerName(Name);
-                Console.WriteLine("RenameCalled");
-                renamed = true;
+                bool renamed;
+                WindowsIdentity identity = ServiceSecurityContext.Current.WindowsIdentity;
+                using (identity.Impersonate())
+                {
+                    //renamed = WindowsAPI.SetComputerName(Name);
+                    Console.WriteLine("RenameCalled");
+                    renamed = true;
+                }
+                return renamed;
             }
-            return renamed;
+            catch (Exception ex)
+            {
+                Console.WriteLine("There was an error");
+                WriteInnerException(ex);
+                return false;
+            }
+        }
+        private static void WriteInnerException(Exception inner)
+        {
+            if (inner != null)
+            {
+                Console.WriteLine(inner.Message);
+                WriteInnerException(inner.InnerException);
+            }
         }
     }
 }

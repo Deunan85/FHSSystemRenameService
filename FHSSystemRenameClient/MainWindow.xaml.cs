@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using Microsoft.Win32;
 using System.ComponentModel;
 using System.ServiceModel;
+using Log4Net;
 
 namespace FHSSystemRenameClient
 {
@@ -54,16 +55,23 @@ namespace FHSSystemRenameClient
         {
             foreach (DataHolder item in dm.ComputerList)
             {
-                // Create the endpoint to connect to
-                string endPointAddr = "http://" + item.IPAddress + ":8080/SystemRenameService";
-                EndpointAddress endPointAddress = new EndpointAddress(endPointAddr);
-                WSHttpBinding binding = new WSHttpBinding();
-                using (SystemRenameService.SystemRenameServiceClient client = new SystemRenameService.SystemRenameServiceClient(binding, endPointAddress))
+                try
                 {
-                    // Send rename command
-                    item.Renamed = client.RenameComputer(item.ComputerName);
+                    // Create the endpoint to connect to
+                    string endPointAddr = "http://" + item.IPAddress + ":8080/SystemRenameService";
+                    EndpointAddress endPointAddress = new EndpointAddress(endPointAddr);
+                    WSHttpBinding binding = new WSHttpBinding();
+                    using (SystemRenameService.SystemRenameServiceClient client = new SystemRenameService.SystemRenameServiceClient(binding, endPointAddress))
+                    {
+                        // Send rename command
+                        item.Renamed = client.RenameComputer(item.ComputerName);
+                    } // Close connection
                 }
-                // Close connection
+                catch (Exception ex)
+                {
+                    Logging.log.Error("There was an error");
+                    Logging.log.Error(ex.Message,ex);
+                }
             }
         }
     }
