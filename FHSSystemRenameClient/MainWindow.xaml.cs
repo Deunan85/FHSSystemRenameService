@@ -63,6 +63,7 @@ namespace FHSSystemRenameClient
                     WSHttpBinding binding = new WSHttpBinding();
                     using (SystemRenameService.SystemRenameServiceClient client = new SystemRenameService.SystemRenameServiceClient(binding, endPointAddress))
                     {
+                        client.ClientCredentials.Windows.AllowedImpersonationLevel = System.Security.Principal.TokenImpersonationLevel.Impersonation;
                         // Send rename command
                         item.Renamed = client.RenameComputer(item.ComputerName);
                     } // Close connection

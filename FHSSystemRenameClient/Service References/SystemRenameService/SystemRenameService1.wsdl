@@ -140,8 +140,8 @@
   </wsp:Policy>
   <wsdl:types>
     <xsd:schema targetNamespace="http://tempuri.org/Imports">
-      <xsd:import schemaLocation="http://192.168.1.112:8080/SystemRenameService?xsd=xsd0" namespace="http://tempuri.org/" />
-      <xsd:import schemaLocation="http://192.168.1.112:8080/SystemRenameService?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://192.168.240.1:8080/SystemRenameService?xsd=xsd0" namespace="http://tempuri.org/" />
+      <xsd:import schemaLocation="http://192.168.240.1:8080/SystemRenameService?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
     </xsd:schema>
   </wsdl:types>
   <wsdl:message name="ISystemRenameService_RenameComputer_InputMessage">
@@ -173,9 +173,9 @@
   </wsdl:binding>
   <wsdl:service name="SystemRenameService">
     <wsdl:port name="WSHttpBinding_ISystemRenameService" binding="tns:WSHttpBinding_ISystemRenameService">
-      <soap12:address location="http://192.168.1.112:8080/SystemRenameService" />
+      <soap12:address location="http://192.168.240.1:8080/SystemRenameService" />
       <wsa10:EndpointReference>
-        <wsa10:Address>http://192.168.1.112:8080/SystemRenameService</wsa10:Address>
+        <wsa10:Address>http://192.168.240.1:8080/SystemRenameService</wsa10:Address>
         <Identity xmlns="http://schemas.xmlsoap.org/ws/2006/02/addressingidentity">
           <Upn>AURORA_NT\groman</Upn>
         </Identity>

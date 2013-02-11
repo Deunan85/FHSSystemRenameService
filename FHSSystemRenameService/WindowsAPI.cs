@@ -11,7 +11,7 @@ namespace FHSSystemRenameService
 {
     class WindowsAPI
     {
-        #region External API Calls
+        #region External API Callsq
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         private static extern int SystemParametersInfo(int uiAction, int uiParam, String pvParam, int fWinIni);
 
@@ -23,6 +23,12 @@ namespace FHSSystemRenameService
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         private static extern int SystemParametersInfo(int uiAction, int uiParam, ref int pvParam, int fWinIni);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern bool ExitWindowsEx(int uFlags, int dwReason);
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
+        private static extern bool MoveFileEx(String lpExistingFileName, String lpNewFileName, int dwFlags);
         #endregion
 
         #region Background API Call
@@ -135,27 +141,58 @@ namespace FHSSystemRenameService
 
         #endregion
 
+        #region ForceRestartOfWindows
+        // Constants for API Call
+        private const int EWX_REBOOT = 0x02;
+        private const int EWX_FORCE = 0x04;
+
+        private static bool ForceRestartOfWindows()
+        {
+            if (!ExitWindowsEx(EWX_REBOOT | EWX_FORCE, 0))
+            {
+                return false;
+            }
+            return true;
+        }
+        #endregion
+
+        #region DeleteFileOnReboot
+        // Constants for API Call
+        private const int MOVEFILE_DELAY_UNTIL_REBOOT = 0x4;
+
+        private static bool DeleteFileOnReboot(string FileName)
+        {
+            if (!MoveFileEx(FileName, null, MOVEFILE_DELAY_UNTIL_REBOOT)) 
+            { 
+                return false; 
+            }
+            return true;
+        }
+        #endregion
+
         #region Execution Functions
         public static bool SetComputerName(String Name)
         {
-            using (ManagementObject wmiObject = new ManagementObject(new ManagementPath(String.Format("Win32_ComputerSystem.Name='{0}'", System.Environment.MachineName))))
-            {
-                ManagementBaseObject inputArgs = wmiObject.GetMethodParameters("Rename");
-                inputArgs["Name"] = Name;
+            ManagementObject ob = new ManagementObject();
+            //using (ManagementObject wmiObject = new ManagementObject(new ManagementPath(String.Format("Win32_ComputerSystem.Name='{0}'", System.Environment.MachineName))))
+            //{
+            //    ManagementBaseObject inputArgs = wmiObject.GetMethodParameters("Rename");
+            //    inputArgs["Name"] = Name;
 
-                ManagementBaseObject outParams = wmiObject.InvokeMethod("Rename", inputArgs, null);
-                uint ret = (uint)(outParams.Properties["ReturnValue"].Value);
-                if (ret == 0)
-                {
-                    //worked
-                    return true;
-                }
-                else
-                {
-                    //didn't work
-                    return false;
-                }
-            }
+            //    ManagementBaseObject outParams = wmiObject.InvokeMethod("Rename", inputArgs, null);
+            //    uint ret = (uint)(outParams.Properties["ReturnValue"].Value);
+            //    if (ret == 0)
+            //    {
+            //        //worked
+            //        return true;
+            //    }
+            //    else
+            //    {
+            //        //didn't work
+            //        return false;
+            //    }
+            //}
+            return false;
         }
         #endregion // Execution Functions
     }

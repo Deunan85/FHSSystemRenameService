@@ -14,11 +14,14 @@ namespace FHSSystemRenameServiceHost
 {
     public partial class SystemRenameServiceManged : ServiceBase
     {
+        
         public SystemRenameServiceManged()
         {
             InitializeComponent();
         }
+
         private SystemRenameWorker _RenameWorker = new SystemRenameWorker();
+        private ServiceHost serviceHost;
 
         protected override void OnStart(string[] args)
         {
@@ -33,8 +36,7 @@ namespace FHSSystemRenameServiceHost
 
             // begin the self-hosting of the service
             // Create a ServiceHost for the SystemRenameService type.
-            using (ServiceHost serviceHost =
-                   new ServiceHost(typeof(SystemRenameService)))
+            serviceHost = new ServiceHost(typeof(SystemRenameService));
             {
                 serviceHost.AddServiceEndpoint(typeof(ISystemRenameService), binding, baseAddress);
                 // Enable metadata publishing.
@@ -44,13 +46,17 @@ namespace FHSSystemRenameServiceHost
                 smb.MetadataExporter.PolicyVersion = PolicyVersion.Policy15;
                 serviceHost.Description.Behaviors.Add(smb);
 
-                // Open the ServiceHost to create listeners         // and start listening for messages.
+                // Open the ServiceHost to create listeners
+                // and start listening for messages.
                 serviceHost.Open();
             }
         }
 
         protected override void OnStop()
         {
+            // Close the connection
+            serviceHost.Close();
+            serviceHost = null;
             _RenameWorker.End();
         }
     }

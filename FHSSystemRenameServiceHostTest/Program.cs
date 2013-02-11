@@ -21,7 +21,7 @@ namespace FHSSystemRenameServiceHostTest
             // Create the Uri to be accessed
             Uri baseAddress = new Uri("http://" + NetOps.GetLocalIP() + ":8080/SystemRenameService");
 
-            // Create Binding to be used by the service
+            //// Create Binding to be used by the service
             WSHttpBinding binding = new WSHttpBinding();
 
             try
@@ -49,12 +49,13 @@ namespace FHSSystemRenameServiceHostTest
                     Console.WriteLine();
                     Console.ReadLine();
 
-                    serviceHost.Close();
+                    //serviceHost.Close();
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine("An error was encountered");
+                Console.WriteLine(ex.Message);
                 WriteInnerException(ex.InnerException);
                 Console.WriteLine(ex.StackTrace);
             }
