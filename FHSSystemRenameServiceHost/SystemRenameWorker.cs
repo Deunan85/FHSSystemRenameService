@@ -33,6 +33,11 @@ namespace FHSSystemRenameServiceHost
         {
 
         }
+
+        /// <summary>Rename process that moves all files and all folders from source to destination
+        /// </summary>
+        /// <param name="SourceDirectoryName">The Source Directory to move contents</param>
+        /// <param name="DestinationDirectoryName">The Destination Directory</param>
         private void MoveFiles(string SourceDirectoryName, string DestinationDirectoryName)
         {
             string FileName;
@@ -44,8 +49,25 @@ namespace FHSSystemRenameServiceHost
                 Directory.CreateDirectory(DestinationDirectoryName);
             }
 
-            // Move SubDirectories
+            // Get the list of files in MyPictures
+            List<string> FileList = Directory.EnumerateFiles(SourceDirectoryName).ToList<string>();
 
+            // Move files out
+            foreach (string s in FileList)
+            {
+                FileName = System.IO.Path.GetFileName(s);
+                File.Move(s, DestinationDirectoryName + "\\" + FileName);
+            }
+            // Move SubDirectories
+            // Get List of Folders in MyPictures
+            List<string> SubDirectories = Directory.EnumerateDirectories(SourceDirectoryName).ToList<string>();
+
+            // Move Folders
+            foreach (string s in SubDirectories)
+            {
+                FolderName = System.IO.Path.GetFileName(s);
+                Directory.Move(s, DestinationDirectoryName + "\\" + FolderName);
+            }
         }
     }
 }

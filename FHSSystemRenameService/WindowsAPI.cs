@@ -171,28 +171,19 @@ namespace FHSSystemRenameService
         #endregion
 
         #region Execution Functions
-        public static bool SetComputerName(String Name)
+        public static uint SetComputerName(String Name)
         {
+            uint ret;
             ManagementObject ob = new ManagementObject();
-            //using (ManagementObject wmiObject = new ManagementObject(new ManagementPath(String.Format("Win32_ComputerSystem.Name='{0}'", System.Environment.MachineName))))
-            //{
-            //    ManagementBaseObject inputArgs = wmiObject.GetMethodParameters("Rename");
-            //    inputArgs["Name"] = Name;
+            using (ManagementObject wmiObject = new ManagementObject(new ManagementPath(String.Format("Win32_ComputerSystem.Name='{0}'", System.Environment.MachineName))))
+            {
+                ManagementBaseObject inputArgs = wmiObject.GetMethodParameters("Rename");
+                inputArgs["Name"] = Name;
 
-            //    ManagementBaseObject outParams = wmiObject.InvokeMethod("Rename", inputArgs, null);
-            //    uint ret = (uint)(outParams.Properties["ReturnValue"].Value);
-            //    if (ret == 0)
-            //    {
-            //        //worked
-            //        return true;
-            //    }
-            //    else
-            //    {
-            //        //didn't work
-            //        return false;
-            //    }
-            //}
-            return false;
+                ManagementBaseObject outParams = wmiObject.InvokeMethod("Rename", inputArgs, null);
+                ret = (uint)(outParams.Properties["ReturnValue"].Value);
+            }
+            return ret;
         }
         #endregion // Execution Functions
     }

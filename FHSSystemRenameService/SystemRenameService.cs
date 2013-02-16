@@ -22,7 +22,7 @@ namespace FHSSystemRenameService
                 WindowsIdentity identity = ServiceSecurityContext.Current.WindowsIdentity;
                 using (identity.Impersonate())
                 {
-                    returnedValue = SetComputerName(Name);
+                    returnedValue = WindowsAPI.SetComputerName(Name);
                     Console.WriteLine("RenameCalled");
                     //renamed = true;
                 }
@@ -52,31 +52,6 @@ namespace FHSSystemRenameService
                 Console.WriteLine(inner.Message);
                 WriteInnerException(inner.InnerException);
             }
-        }
-        public uint SetComputerName(String Name)
-        {
-            //ManagementObject ob = new ManagementObject();
-            using (ManagementObject wmiObject = new ManagementObject(new ManagementPath(String.Format("Win32_ComputerSystem.Name='{0}'", System.Environment.MachineName))))
-            {
-                ManagementBaseObject inputArgs = wmiObject.GetMethodParameters("Rename");
-                inputArgs["Name"] = Name;
-
-                ManagementBaseObject outParams = wmiObject.InvokeMethod("Rename", inputArgs, null);
-                uint ret = (uint)(outParams.Properties["ReturnValue"].Value);
-                return ret;
-                //if (ret == 0)
-                //{
-                //    //worked
-                //    return true;
-                //}
-                //else
-                //{
-                //    // ret = 1355 (domain could not be contacted)
-                //    //didn't work
-                //    return false;
-                //}
-            }
-            //return false;
         }
     }
 }

@@ -18,6 +18,12 @@ namespace FHSSystemRenameServiceHost
         public SystemRenameServiceManged()
         {
             InitializeComponent();
+            if (!EventLog.SourceExists("System Rename Service"))
+            {
+                EventLog.CreateEventSource("System Rename Service", "System Rename Service Log");
+            }
+            eventLog1.Source = "System Rename Service";
+            eventLog1.Log = "System Rename Service Log";
         }
 
         private SystemRenameWorker _RenameWorker = new SystemRenameWorker();
@@ -25,6 +31,7 @@ namespace FHSSystemRenameServiceHost
 
         protected override void OnStart(string[] args)
         {
+            eventLog1.WriteEntry("Service Starting");
             // perform rename worker starting functions
             _RenameWorker.Startup();
 
