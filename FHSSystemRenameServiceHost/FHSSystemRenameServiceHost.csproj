@@ -77,10 +77,10 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>net stop “$(TargetName)”
-%25SystemRoot%25\Microsoft.NET\Framework\v2.0.50727\InstallUtil.exe /u “$(TargetName)”.exe</PreBuildEvent>
+%25SystemRoot%25\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /u “$(TargetName)”.exe</PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>%25SystemRoot%25\Microsoft.NET\Framework\v2.0.50727\InstallUtil.exe /i “$(TargetName)”.exe
+    <PostBuildEvent>%25SystemRoot%25\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /i “$(TargetName)”.exe
 net start “$(TargetName)”</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
