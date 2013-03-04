@@ -7,9 +7,9 @@ using Microsoft.Win32;
 using System.Management;
 
 
-namespace FHSSystemRenameService
+namespace FHSSystemRenameServiceHost
 {
-    class WindowsAPI
+    public class WindowsAPI
     {
         #region External API Callsq
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
@@ -75,14 +75,17 @@ namespace FHSSystemRenameService
         // Constants for API Call
         private const int SPI_GETSCREENSAVEACTIVE = 0x0010;
 
-        private static bool GetScreenSaverActive()
+        public static bool GetScreenSaverActive()
         {
             bool isActive = false;
 
             SystemParametersInfo(SPI_GETSCREENSAVEACTIVE, 0, ref isActive, 0);
             return isActive;
         }
-        private static String GetScreenSaverPath()
+        #endregion
+
+        #region GetScreenSaverPath
+        public static String GetScreenSaverPath()
         {
             String path = string.Empty;
             RegistryKey key = Registry.CurrentUser.OpenSubKey("Control Panel", false);
@@ -90,14 +93,13 @@ namespace FHSSystemRenameService
             path = key.GetValue("SCRNSAVE.EXE", String.Empty) as String;
             return path;
         }
-
         #endregion
 
         #region SetScreenSaverTimout
         // Constants for API Call
         private const int SPI_SETSCREENSAVERTIMEOUT = 0x000F;
 
-        private static void SetScreenSaverTimeout(int time)
+        public static void SetScreenSaverTimeout(int time)
         {
             SystemParametersInfo(SPI_SETSCREENSAVERTIMEOUT, time, 0, SPIF_SENDWININICHANGE);
         }
@@ -107,7 +109,7 @@ namespace FHSSystemRenameService
         // Constants for API Call
         private const int SPI_GETSCREENSAVETIMEOUT = 0x000E;
 
-        private int GetScreenSaverTimeout()
+        public static int GetScreenSaverTimeout()
         {
             int timeout = 0;
             SystemParametersInfo(SPI_GETSCREENSAVETIMEOUT, 0, ref timeout, 0);
@@ -119,7 +121,7 @@ namespace FHSSystemRenameService
         // Constants for API Call
         private const int SPI_SETSCREENSAVESECURE = 0x0077;
 
-        private static void SetScreenSaverSecure(bool value)
+        public static void SetScreenSaverSecure(bool value)
         {
             int Secure = 0;
             if (value) { Secure = 1; }
@@ -132,7 +134,7 @@ namespace FHSSystemRenameService
         // Constants for API Call
         private const int SPI_GETSCREENSAVESECURE = 0x0076;
 
-        private static bool GetScreenSaverSecure()
+        public static bool GetScreenSaverSecure()
         {
             bool Secure = false;
             SystemParametersInfo(SPI_GETSCREENSAVESECURE, 0, ref Secure, 0);
@@ -146,7 +148,7 @@ namespace FHSSystemRenameService
         private const int EWX_REBOOT = 0x02;
         private const int EWX_FORCE = 0x04;
 
-        private static bool ForceRestartOfWindows()
+        public static bool ForceRestartOfWindows()
         {
             if (!ExitWindowsEx(EWX_REBOOT | EWX_FORCE, 0))
             {
@@ -160,31 +162,14 @@ namespace FHSSystemRenameService
         // Constants for API Call
         private const int MOVEFILE_DELAY_UNTIL_REBOOT = 0x4;
 
-        private static bool DeleteFileOnReboot(string FileName)
+        public static bool DeleteFileOnReboot(string FileName)
         {
-            if (!MoveFileEx(FileName, null, MOVEFILE_DELAY_UNTIL_REBOOT)) 
-            { 
-                return false; 
+            if (!MoveFileEx(FileName, null, MOVEFILE_DELAY_UNTIL_REBOOT))
+            {
+                return false;
             }
             return true;
         }
         #endregion
-
-        #region Execution Functions
-        public static uint SetComputerName(String Name)
-        {
-            uint ret;
-            ManagementObject ob = new ManagementObject();
-            using (ManagementObject wmiObject = new ManagementObject(new ManagementPath(String.Format("Win32_ComputerSystem.Name='{0}'", System.Environment.MachineName))))
-            {
-                ManagementBaseObject inputArgs = wmiObject.GetMethodParameters("Rename");
-                inputArgs["Name"] = Name;
-
-                ManagementBaseObject outParams = wmiObject.InvokeMethod("Rename", inputArgs, null);
-                ret = (uint)(outParams.Properties["ReturnValue"].Value);
-            }
-            return ret;
-        }
-        #endregion // Execution Functions
     }
 }

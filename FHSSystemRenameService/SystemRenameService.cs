@@ -17,14 +17,16 @@ namespace FHSSystemRenameService
         {
             try
             {
-                bool renamed;
+                Logging.log.Debug("Attempting to rename " + Environment.MachineName + " to " + Name);
                 uint returnedValue;
                 WindowsIdentity identity = ServiceSecurityContext.Current.WindowsIdentity;
                 using (identity.Impersonate())
                 {
-                    returnedValue = WindowsAPI.SetComputerName(Name);
-                    Console.WriteLine("RenameCalled");
-                    //renamed = true;
+                    Logging.log.Debug("Calling rename function");
+                    returnedValue = ComputerRename.SetComputerName(Name);
+                    Logging.log.Debug("Rename function called");
+                    //Console.WriteLine("RenameCalled");
+                    Logging.log.Debug(returnedValue);
                 }
                 if (returnedValue == 0)
                 {
@@ -32,7 +34,7 @@ namespace FHSSystemRenameService
                 }
                 else
                 {
-                    Console.WriteLine("Error Code: "+returnedValue);
+                    //Console.WriteLine("Error Code: "+returnedValue);
                     return false;
                 }
 
@@ -40,8 +42,9 @@ namespace FHSSystemRenameService
             }
             catch (Exception ex)
             {
-                Console.WriteLine("There was an error");
-                WriteInnerException(ex);
+                Logging.log.Debug("Error occured " + ex.Message, ex);
+                //Console.WriteLine("There was an error");
+                //WriteInnerException(ex);
                 return false;
             }
         }

@@ -1,0 +1,4 @@
+﻿%SystemRoot%\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /i “$(TargetName)”.exe
+net start “$(TargetName)”
+net stop “$(TargetName)”
+%SystemRoot%\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /u “$(TargetName)”.exe

@@ -59,7 +59,7 @@ namespace FHSSystemRenameServiceHostTest
                 WriteInnerException(ex.InnerException);
                 Console.WriteLine(ex.StackTrace);
             }
-            _RenameWorker.End();
+            _RenameWorker.CleanUp();
         }
         private static void WriteInnerException(Exception inner)
         {

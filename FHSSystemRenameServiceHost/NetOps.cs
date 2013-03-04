@@ -5,7 +5,7 @@ using System.Text;
 using System.Net;
 using System.IO;
 
-namespace FHSSystemRenameService
+namespace FHSSystemRenameServiceHost
 {
     public class NetOps
     {
@@ -25,9 +25,17 @@ namespace FHSSystemRenameService
         }
         public static void GetWebImage(String url, String ImagePath)
         {
-            Stream _imageStream = new WebClient().OpenRead(url);
-            System.Drawing.Image _img = System.Drawing.Image.FromStream(_imageStream);
-            _img.Save(ImagePath);
+            try
+            {
+                Stream _imageStream = new WebClient().OpenRead(url);
+                System.Drawing.Image _img = System.Drawing.Image.FromStream(_imageStream);
+                _img.Save(ImagePath);
+            }
+            catch (Exception ex)
+            {
+                // TODO
+                // Add error handling
+            }
         }
     }
 }

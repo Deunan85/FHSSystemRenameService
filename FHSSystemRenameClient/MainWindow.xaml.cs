@@ -34,6 +34,7 @@ namespace FHSSystemRenameClient
 
         private void btOpenFile_Click(object sender, RoutedEventArgs e)
         {
+            Logging.log.Debug("Opening a file");
             // Configure open file dialog box
             OpenFileDialog dlg = new OpenFileDialog();
             dlg.FileName = "Computer List";
@@ -46,6 +47,7 @@ namespace FHSSystemRenameClient
             // Process open file dialog box
             if (result == true)
             {
+                Logging.log.Debug("Parsing " + dlg.FileName);
                 tbFileName.Text = dlg.SafeFileName;
                 dm.ComputerList = ObservableCollectionBuilder.Parse(dlg.FileName);
             }
@@ -53,10 +55,12 @@ namespace FHSSystemRenameClient
 
         private void btRenameComputer_Click(object sender, RoutedEventArgs e)
         {
+            Logging.log.Debug("Entering the rename function");
             foreach (DataHolder item in dm.ComputerList)
             {
                 try
                 {
+                    Logging.log.Info("Renaming " + item.IPAddress + " to " + item.ComputerName);
                     // Create the endpoint to connect to
                     string endPointAddr = "http://" + item.IPAddress + ":8080/SystemRenameService";
                     EndpointAddress endPointAddress = new EndpointAddress(endPointAddr);

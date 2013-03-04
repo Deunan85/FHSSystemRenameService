@@ -11,7 +11,8 @@
     <RootNamespace>FHSSystemRenameServiceHostTest</RootNamespace>
     <AssemblyName>FHSSystemRenameServiceHostTest</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -34,7 +35,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="log4net, Version=1.2.11.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\log4net-1.2.11-bin-newkey\log4net-1.2.11\bin\net\4.0\release\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml.Linq" />
@@ -51,6 +57,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\FHSSystemRenameServiceHost\FHSSystemRenameServiceHost.csproj">
+      <Project>{0AD5491E-0BD5-453E-97FB-82A7EAD6D551}</Project>
+      <Name>FHSSystemRenameServiceHost</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FHSSystemRenameService\FHSSystemRenameService.csproj">
       <Project>{B6463ECA-4765-48BB-94DF-4CBD36B2E30B}</Project>
       <Name>FHSSystemRenameService</Name>

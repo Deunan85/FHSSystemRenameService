@@ -33,7 +33,9 @@ namespace FHSSystemRenameServiceHost
         {
             eventLog1.WriteEntry("Service Starting");
             // perform rename worker starting functions
+            eventLog1.WriteEntry("Entering the startup routine");
             _RenameWorker.Startup();
+            eventLog1.WriteEntry("Finished startup routine");
 
              // Create the Uri to be accessed
             Uri baseAddress = new Uri("http://" + NetOps.GetLocalIP() + ":8080/SystemRenameService");
@@ -55,16 +57,21 @@ namespace FHSSystemRenameServiceHost
 
                 // Open the ServiceHost to create listeners
                 // and start listening for messages.
+                eventLog1.WriteEntry("Opening listening port");
                 serviceHost.Open();
             }
         }
 
         protected override void OnStop()
         {
+            eventLog1.WriteEntry("Closing listening port");
             // Close the connection
             serviceHost.Close();
             serviceHost = null;
-            _RenameWorker.End();
+            eventLog1.WriteEntry("Entering the cleanup routine");
+            _RenameWorker.CleanUp();
+            eventLog1.WriteEntry("Finished cleaning up");
+            eventLog1.WriteEntry("Service Stopping");
         }
     }
 }
