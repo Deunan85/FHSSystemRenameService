@@ -12,6 +12,10 @@ namespace FHSSystemRenameService
     // NOTE: You can use the "Rename" command on the "Refactor" menu to change the class name "Service1" in both code and config file together.
     public class SystemRenameService : ISystemRenameService
     {
+        // Notification on success
+        public delegate void RenameCalledEventHandler(bool value);
+        public event RenameCalledEventHandler RenameCalled;
+
         //[OperationBehavior(Impersonation = ImpersonationOption.Required)]
         public bool RenameComputer(string Name)
         {
@@ -25,11 +29,11 @@ namespace FHSSystemRenameService
                     Logging.log.Debug("Calling rename function");
                     returnedValue = ComputerRename.SetComputerName(Name);
                     Logging.log.Debug("Rename function called");
-                    //Console.WriteLine("RenameCalled");
-                    Logging.log.Debug(returnedValue);
+                    Logging.log.Debug("Return value: "+returnedValue);
                 }
                 if (returnedValue == 0)
                 {
+                    if (this.RenameCalled != null) { this.RenameCalled(true); }
                     return true;
                 }
                 else

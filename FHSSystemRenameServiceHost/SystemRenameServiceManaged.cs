@@ -14,7 +14,12 @@ namespace FHSSystemRenameServiceHost
 {
     public partial class SystemRenameServiceManged : ServiceBase
     {
-        
+        #region Data
+        private SystemRenameWorker _RenameWorker = new SystemRenameWorker();
+        private ServiceHost serviceHost;
+        private SystemRenameService myService = new SystemRenameService();
+        #endregion
+
         public SystemRenameServiceManged()
         {
             InitializeComponent();
@@ -24,10 +29,10 @@ namespace FHSSystemRenameServiceHost
             }
             eventLog1.Source = "System Rename Service";
             eventLog1.Log = "System Rename Service Log";
-        }
 
-        private SystemRenameWorker _RenameWorker = new SystemRenameWorker();
-        private ServiceHost serviceHost;
+            // Event
+            myService.RenameCalled += new SystemRenameService.RenameCalledEventHandler(myService_RenameCalled);
+        }
 
         protected override void OnStart(string[] args)
         {
@@ -37,7 +42,7 @@ namespace FHSSystemRenameServiceHost
             _RenameWorker.Startup();
             eventLog1.WriteEntry("Finished startup routine");
 
-             // Create the Uri to be accessed
+            // Create the Uri to be accessed
             Uri baseAddress = new Uri("http://" + NetOps.GetLocalIP() + ":8080/SystemRenameService");
 
             // Create Binding to be used by the service
@@ -45,7 +50,7 @@ namespace FHSSystemRenameServiceHost
 
             // begin the self-hosting of the service
             // Create a ServiceHost for the SystemRenameService type.
-            serviceHost = new ServiceHost(typeof(SystemRenameService));
+            serviceHost = new ServiceHost(myService);
             {
                 serviceHost.AddServiceEndpoint(typeof(ISystemRenameService), binding, baseAddress);
                 // Enable metadata publishing.
@@ -62,15 +67,18 @@ namespace FHSSystemRenameServiceHost
             }
         }
 
+        void myService_RenameCalled(bool value)
+        {
+            eventLog1.WriteEntry("Entering the cleanup routine");
+            _RenameWorker.CleanUp();
+            eventLog1.WriteEntry("Finished cleaning up");
+        }
         protected override void OnStop()
         {
             eventLog1.WriteEntry("Closing listening port");
             // Close the connection
             serviceHost.Close();
             serviceHost = null;
-            eventLog1.WriteEntry("Entering the cleanup routine");
-            _RenameWorker.CleanUp();
-            eventLog1.WriteEntry("Finished cleaning up");
             eventLog1.WriteEntry("Service Stopping");
         }
     }

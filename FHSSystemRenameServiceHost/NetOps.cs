@@ -37,5 +37,21 @@ namespace FHSSystemRenameServiceHost
                 // Add error handling
             }
         }
+        public static System.Drawing.Image GetWebImage(String url)
+        {
+            System.Drawing.Image image = null;
+            try
+            {
+                using (Stream _imageStream = new WebClient().OpenRead(url))
+                {
+                    image = System.Drawing.Image.FromStream(_imageStream);
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return image;
+        }
     }
 }
