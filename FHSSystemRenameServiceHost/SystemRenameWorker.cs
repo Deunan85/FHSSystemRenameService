@@ -5,6 +5,9 @@ using System.Text;
 using System.IO;
 using System.Reflection;
 using System.Configuration;
+using System.Drawing;
+using System.Configuration.Install;
+
 
 namespace FHSSystemRenameServiceHost
 {
@@ -13,7 +16,8 @@ namespace FHSSystemRenameServiceHost
         #region Data
         private string LocalIP = NetOps.GetLocalIP();
         private string WorkingDirectory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-        private string MyPictures = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+        private string OEMBackgroundDirectory = @"C:\Windows\System32\oobe\info\backgrounds";
+        private string InfoDirectory = @"C:\Windows\System32\oobe\info";
         private string Website;
         #endregion
 
@@ -21,51 +25,55 @@ namespace FHSSystemRenameServiceHost
         {
             Logging.log.Debug(LocalIP);
             Logging.log.Debug(WorkingDirectory);
-            Logging.log.Debug(MyPictures);
+            //Logging.log.Debug(MyPictures);
 
             // set web address
-            Website = "http://" + "www.barcodesinc.com/generator/image.php?code=" + LocalIP + "&style=197&C128&width=200&height=50&xres=1&font=3";
-
-            // There should only be one file MyPictures
-            // If the file exists delete it so all other other files can be moved
-            if (File.Exists(MyPictures + "\\" + LocalIP + ".png"))
-            {
-                File.Delete(MyPictures + "\\" + LocalIP + ".png");
-            }
-            //MoveAll(MyPictures, WorkingDirectory + "\\" + "Temp Pictures");
+            Website = "http://" + "www.barcodesinc.com/generator/Image.php?code=" + LocalIP + "&style=197&C128&Width=200&Height=50&xres=1&font=3";
 
             // create the barcode
-            //NetOps.GetWebImage(Website, MyPictures + "\\" + LocalIP + ".png");
+            System.Drawing.Image barcode = NetOps.GetWebImage(Website);
 
-            // Save Screensaver settings
+            // Get Screen size
+            int height = (int)System.Windows.SystemParameters.PrimaryScreenHeight;
+            int width = (int)System.Windows.SystemParameters.PrimaryScreenWidth;
 
+            // Create new background
+            ImageProcessing.CreateFourCornerBackground(height, width, barcode, WorkingDirectory + "\\backgroundDefault.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
 
-            // Turn on Screensaver
-            WindowsAPI.SetScreenSaver("PhotoScreensaver.scr", true);
+            // Create the directory to support the OEMbackground
+            Directory.CreateDirectory(OEMBackgroundDirectory);
+
+            // Copy the OEM Background to the new OEM directory
+            File.Copy(WorkingDirectory + "\\backgroundDefault.jpg", OEMBackgroundDirectory + "\\backgroundDefault.jpg", true);
+
+            // Enable OEMBackground
+            RegistryWorker.EnableOEMBackground();
         }
         public void CleanUp()
         {
-            // reset screensaver settings
+            // Disable OEMBackground
+            RegistryWorker.DisableOEMBackground();
 
-            // Delete barcode image
-            //File.Delete(MyPictures + "\\" + LocalIP + ".png");
-
-            // Move images back
-            //MoveAll(WorkingDirectory + "\\" + "Temp Pictures", MyPictures);
-
-            // Delete holding folder
-            //Directory.Delete(WorkingDirectory + "\\" + "Temp Pictures");
-
-            // Remove service from list
+            // Uninstall the existing service
+            ManagedInstallerClass.InstallHelper(new string[] { "/u", Assembly.GetExecutingAssembly().Location });
 
             // Flag files for deletion
-            //List<string> FileList = Directory.EnumerateFiles(WorkingDirectory).ToList<string>();
-            //foreach (string s in FileList)
-            //{
-            //    WindowsAPI.DeleteFileOnReboot(s);
-            //}
-            //WindowsAPI.DeleteFileOnReboot(WorkingDirectory);
+            List<string> FileList = Directory.EnumerateFiles(WorkingDirectory).ToList<string>();
+            foreach (string s in FileList)
+            {
+                WindowsAPI.DeleteFileOnReboot(s);
+            }
+            WindowsAPI.DeleteFileOnReboot(WorkingDirectory);
 
+            FileList = Directory.EnumerateFiles(OEMBackgroundDirectory).ToList<string>();
+            foreach (string s in FileList)
+            {
+                WindowsAPI.DeleteFileOnReboot(s);
+            }
+            WindowsAPI.DeleteFileOnReboot(OEMBackgroundDirectory);
+            WindowsAPI.DeleteFileOnReboot(InfoDirectory);
+
+            
             // Force system reboot
             //WindowsAPI.ForceRestartOfWindows();
         }

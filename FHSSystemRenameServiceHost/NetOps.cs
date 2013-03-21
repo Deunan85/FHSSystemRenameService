@@ -34,7 +34,7 @@ namespace FHSSystemRenameServiceHost
             catch (Exception ex)
             {
                 // TODO
-                // Add error handling
+                Logging.log.Error("Error getting Image from web: " + ex.Message);
             }
         }
         public static System.Drawing.Image GetWebImage(String url)
@@ -49,7 +49,7 @@ namespace FHSSystemRenameServiceHost
             }
             catch (Exception ex)
             {
-
+                Logging.log.Error("Error getting Image from web: " + ex.Message);
             }
             return image;
         }
