@@ -16,8 +16,8 @@ namespace FHSSystemRenameServiceHost
         #region Data
         private string LocalIP = NetOps.GetLocalIP();
         private string WorkingDirectory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-        private string OEMBackgroundDirectory = @"C:\Windows\System32\oobe\info\backgrounds";
-        private string InfoDirectory = @"C:\Windows\System32\oobe\info";
+        private string OEMBackgroundDirectory = @"%windir%\Sysnative\oobe\info\backgrounds";
+        private string InfoDirectory = @"%windir%\Sysnative\oobe\info";
         private string Website;
         #endregion
 
@@ -25,36 +25,60 @@ namespace FHSSystemRenameServiceHost
         {
             Logging.log.Debug(LocalIP);
             Logging.log.Debug(WorkingDirectory);
+            Logging.log.Debug(OEMBackgroundDirectory);
+            Logging.log.Debug(InfoDirectory);
             //Logging.log.Debug(MyPictures);
 
+            // resolve enviroment variables
+            OEMBackgroundDirectory = Environment.ExpandEnvironmentVariables(OEMBackgroundDirectory);
+            InfoDirectory = Environment.ExpandEnvironmentVariables(InfoDirectory);
+            Logging.log.Debug("Expand vaiables");
+            Logging.log.Debug(OEMBackgroundDirectory);
+            Logging.log.Debug(InfoDirectory);
+
             // set web address
-            Website = "http://" + "www.barcodesinc.com/generator/Image.php?code=" + LocalIP + "&style=197&C128&Width=200&Height=50&xres=1&font=3";
+            Website = "http://" + "www.barcodesinc.com/generator/image.php?code=" + LocalIP + "&style=197&type=C128B&width=220&height=50&xres=1&font=3";
 
             // create the barcode
-            System.Drawing.Image barcode = NetOps.GetWebImage(Website);
+            Logging.log.Debug("Getting Image");
+            System.Drawing.Image barcode = NetOps.GetWebImage(Website, WorkingDirectory + "\\barcode.jpg");
+            Logging.log.Debug("Got the Image");
 
             // Get Screen size
             int height = (int)System.Windows.SystemParameters.PrimaryScreenHeight;
             int width = (int)System.Windows.SystemParameters.PrimaryScreenWidth;
+            Logging.log.Debug("Screen Size: " + width + "X" + height);
 
             // Create new background
-            ImageProcessing.CreateFourCornerBackground(height, width, barcode, WorkingDirectory + "\\backgroundDefault.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
+            Logging.log.Debug("Creating the background image");
+            Image background = ImageProcessing.CreateFourCornerBackground(height, width, barcode, WorkingDirectory + "\\FourCorners.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
+            Logging.log.Debug("Background image created");
+
+            // Add Overlay
+            Logging.log.Debug("Adding the Overlay");
+            ImageProcessing.AddImageBelowCenter(background, barcode, WorkingDirectory + "\\backgroundDefault.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
 
             // Create the directory to support the OEMbackground
+            Logging.log.Debug("Create the OEM Directory");
             Directory.CreateDirectory(OEMBackgroundDirectory);
 
             // Copy the OEM Background to the new OEM directory
+            Logging.log.Debug("Move the OEM background file over to the new directory");
             File.Copy(WorkingDirectory + "\\backgroundDefault.jpg", OEMBackgroundDirectory + "\\backgroundDefault.jpg", true);
 
             // Enable OEMBackground
+            Logging.log.Debug("Enabling the OEM Background");
             RegistryWorker.EnableOEMBackground();
         }
         public void CleanUp()
         {
             // Disable OEMBackground
+            Logging.log.Debug("Disabling the OEM Background");
             RegistryWorker.DisableOEMBackground();
+            Logging.log.Debug("OEM Background disabled");
 
             // Uninstall the existing service
+            Logging.log.Debug("Uninstalling the service");
             ManagedInstallerClass.InstallHelper(new string[] { "/u", Assembly.GetExecutingAssembly().Location });
 
             // Flag files for deletion

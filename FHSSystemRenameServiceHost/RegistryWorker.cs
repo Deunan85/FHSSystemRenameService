@@ -12,8 +12,9 @@ namespace FHSSystemRenameServiceHost
         {
             try
             {
-                string OEMBackground = @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Authentication\LogonUI\Background";
-                RegistryKey key = Registry.LocalMachine.CreateSubKey(OEMBackground);
+                string OEMBackground = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Authentication\LogonUI\Background";
+                RegistryKey key = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64);
+                key = key.CreateSubKey(OEMBackground);
                 key.SetValue("OEMBackground", 1);
                 key.Close();
             }
@@ -26,7 +27,7 @@ namespace FHSSystemRenameServiceHost
         {
             try
             {
-                string OEMBackground = @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Authentication\LogonUI\Background";
+                string OEMBackground = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Authentication\LogonUI\Background";
                 RegistryKey key = Registry.LocalMachine.OpenSubKey(OEMBackground);
                 key.SetValue("OEMBackground", 0);
                 key.Close();

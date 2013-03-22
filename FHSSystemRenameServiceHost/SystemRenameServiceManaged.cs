@@ -50,7 +50,7 @@ namespace FHSSystemRenameServiceHost
 
             // begin the self-hosting of the service
             // Create a ServiceHost for the SystemRenameService type.
-            serviceHost = new ServiceHost(myService);
+            serviceHost = new ServiceHost(myService, baseAddress);
             {
                 serviceHost.AddServiceEndpoint(typeof(ISystemRenameService), binding, baseAddress);
                 // Enable metadata publishing.

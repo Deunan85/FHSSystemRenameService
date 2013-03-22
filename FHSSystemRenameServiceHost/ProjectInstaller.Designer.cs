@@ -42,6 +42,8 @@
             this.FHSSystemRenameService.Description = "Listening service for Computer renaming";
             this.FHSSystemRenameService.DisplayName = "System Rename Service";
             this.FHSSystemRenameService.ServiceName = "SystemRenameService";
+            this.FHSSystemRenameService.ServicesDependedOn = new string[] {
+        "tcpip"};
             this.FHSSystemRenameService.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
             // 
             // ProjectInstaller

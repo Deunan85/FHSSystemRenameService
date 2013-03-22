@@ -3,25 +3,52 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Drawing;
+using System.IO;
 
 namespace FHSSystemRenameServiceHost
 {
     public class ImageProcessing
     {
-        public static void CreateFourCornerBackground(int Height, int Width, System.Drawing.Image Image, string FileName, System.Drawing.Imaging.ImageFormat ImageFormat)
+        public static Image CreateFourCornerBackground(int Height, int Width, System.Drawing.Image Image, string FileName, System.Drawing.Imaging.ImageFormat ImageFormat)
         {
+            if (!Directory.Exists(Path.GetDirectoryName(FileName)))
+            {
+                throw new ArgumentException("The holding directory does not exist", "FileName");
+            }
             Image background = CreateFourCornerBackground(Height, Width,Image);
             background.Save(FileName, ImageFormat);
+            return background;
         }
         public static Image CreateFourCornerBackground(int Height, int Width, System.Drawing.Image Image)
         {
-            int margin = 5;
+            if (Image == null)
+            {
+                throw new ArgumentNullException("Image","The image given is null");
+            }
+            if (Height < 0)
+            {
+                throw new ArgumentOutOfRangeException("Height", "The background Height needs to be positive.");
+            }
+            if (Width < 0)
+            {
+                throw new ArgumentOutOfRangeException("Width", "The background Width needs to be positive.");
+            }
+            if (Height < Image.Height*2)
+            {
+                throw new ArgumentOutOfRangeException("Height", "The Height of the background needs to be larger than the image");
+            }
+            if (Width < Image.Width*2)
+            {
+                throw new ArgumentOutOfRangeException("Width","The Width of the background needs to be larger than the image");
+            }
+            
+            int margin = 0;
 
             // Create pointers for image work
             System.Drawing.Point zero = new Point(0, 0);
-            System.Drawing.Point ULCorner = new Point(3, 0);
+            System.Drawing.Point ULCorner = new Point(0, 0);
             System.Drawing.Point URCorner = new Point(Width - Image.Width, 0);
-            System.Drawing.Point LLCorner = new Point(3, Height - Image.Height);
+            System.Drawing.Point LLCorner = new Point(0, Height - Image.Height);
             System.Drawing.Point LRCorner = new Point(Width - Image.Width, Height - Image.Height);
 
             Image background = new Bitmap(Width, Height);
@@ -67,9 +94,18 @@ namespace FHSSystemRenameServiceHost
             }
             background.Save(FileName, ImageFormat);
         }
-        public static void AddImageBelowCenter(Image Background, Image OverLay, string FileName, System.Drawing.Imaging.ImageFormat ImageFormat)
+        public static System.Drawing.Image AddImageBelowCenter(Image Background, Image OverLay)
         {
-            int margin = 5;
+            if (Background == null)
+            {
+                throw new ArgumentNullException("Background", "The background image to alter is null");
+            }
+            if (OverLay == null)
+            {
+                throw new ArgumentNullException("Overlay", "The overlay image is null");
+            }
+            
+            int margin = 0;
 
             using (Graphics gfx = Graphics.FromImage(Background))
             {
@@ -86,6 +122,16 @@ namespace FHSSystemRenameServiceHost
                 gfx.FillRectangle(WhiteBrush, Border);
                 gfx.DrawImageUnscaled(OverLay, MiddleOffset);
             }
+            return Background;
+        }
+        public static System.Drawing.Image AddImageBelowCenter(Image Background, Image OverLay, string FileName, System.Drawing.Imaging.ImageFormat ImageFormat)
+        {
+            if (!Directory.Exists(Path.GetDirectoryName(FileName)))
+            {
+                throw new ArgumentException("The holding directory does not exist", "FileName");
+            }
+            Background = AddImageBelowCenter(Background, OverLay);
+            Background.Save(FileName, ImageFormat);
             return Background;
         }
     }

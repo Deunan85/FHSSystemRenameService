@@ -23,28 +23,38 @@ namespace FHSSystemRenameServiceHost
             }
             return localIP;
         }
-        public static void GetWebImage(String url, String ImagePath)
+        public static System.Drawing.Image GetWebImage(String url, String ImagePath)
         {
+            Logging.log.Debug("Entered Get image and Save it function");
+            System.Drawing.Image image = null;
             try
             {
-                Stream _imageStream = new WebClient().OpenRead(url);
-                System.Drawing.Image _img = System.Drawing.Image.FromStream(_imageStream);
-                _img.Save(ImagePath);
+                using (Stream _imageStream = new WebClient().OpenRead(url))
+                {
+                    Logging.log.Debug("Stream established.  Can Read: " + _imageStream.CanRead);
+                    image = System.Drawing.Image.FromStream(_imageStream);
+                    Logging.log.Debug("Image Size: " + image.Width + "X" + image.Height);
+                    image.Save(ImagePath);   
+                }
             }
             catch (Exception ex)
             {
                 // TODO
                 Logging.log.Error("Error getting Image from web: " + ex.Message);
             }
+            return image;
         }
         public static System.Drawing.Image GetWebImage(String url)
         {
+            Logging.log.Debug("Entered Get image function");
             System.Drawing.Image image = null;
             try
             {
                 using (Stream _imageStream = new WebClient().OpenRead(url))
                 {
+                    Logging.log.Debug("Stream established.  Can Read: " + _imageStream.CanRead);
                     image = System.Drawing.Image.FromStream(_imageStream);
+                    Logging.log.Debug("Image Size: " + image.Width + "X" + image.Height);
                 }
             }
             catch (Exception ex)
